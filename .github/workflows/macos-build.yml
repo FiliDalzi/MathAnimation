@@ -1,4 +1,4 @@
-name: Build macOS App
+name: Build macOS App (Minimal)
 
 on:
   workflow_dispatch:
@@ -16,17 +16,23 @@ jobs:
       - name: Create Build Directory
         run: mkdir build
 
-      - name: Run CMake
+      - name: Configure CMake (Minimal macOS)
         run: |
           cd build
-          cmake .. -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DMACOS_MINIMAL=ON -DCMAKE_CXX_FLAGS="-Wno-error -Wno-unknown-pragmas"
+          cmake .. \
+            -G "Unix Makefiles" \
+            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+            -DMACOS_MINIMAL=ON \
+            -DBUILD_AV1=OFF \
+            -DCMAKE_CXX_FLAGS="-Wno-error -Wno-unknown-pragmas" \
+            -DCMAKE_BUILD_TYPE=Release
 
-      - name: Build
+      - name: Build Minimal App
         run: |
           cd build
           make -j4
 
-      - name: Upload Artifact
+      - name: Upload macOS App Artifact
         uses: actions/upload-artifact@v4
         with:
           name: MathAnimation-macOS
