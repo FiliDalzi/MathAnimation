@@ -17,7 +17,7 @@ endif()
 
 if(APPLE)
     set(MATH_ANIMATION_OS_OSX TRUE)
-    message(STATUS "macOS detected: excluding AV1 and SSE/Windows-only files")
+    message(STATUS "macOS detected: building minimal app (excluding AV1, SSE, Freetype)")
     set(MACOS_MINIMAL TRUE)
 endif()
 
@@ -39,19 +39,20 @@ foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG_UPPER} ${CMAKE_CURRENT_BINARY_DIR}/bin/${OUTPUTCONFIG})
 endforeach()
 
-# Exclude AV1 on macOS
+# Exclude AV1 and Freetype on macOS
 if(NOT MACOS_MINIMAL)
     add_subdirectory(Animations/vendor/av1)
+    add_subdirectory(Animations/vendor/freetype)
 endif()
 
 # Include main animation module
 add_subdirectory(Animations)
 
-# macOS minimal build (no SSE / Axis / AnimationManager)
+# macOS minimal build (no SSE / Windows / AV1 / Freetype)
 if(MACOS_MINIMAL)
     file(GLOB_RECURSE SRC_FILES
         "Animations/src/animation/*.cpp"
-        # Escludi file Windows/SSE problematici
+        # Escludi file problematici SSE/Windows-only
         "Animations/src/animation/Axis.cpp"
         "Animations/src/animation/AnimationManager.cpp"
         "Animations/src/animation/Animation.cpp"
