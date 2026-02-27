@@ -8,26 +8,26 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        submodules: recursive
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-    - name: Create Build Directory
-      run: mkdir build
+      - name: Create Build Directory
+        run: mkdir build
 
-    - name: Run CMake
-      run: |
-        cd build
-        cmake .. -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_CXX_FLAGS="-Wno-error -Wno-unknown-pragmas"
+      - name: Run CMake
+        run: |
+          cd build
+          cmake .. -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DMACOS_MINIMAL=ON -DCMAKE_CXX_FLAGS="-Wno-error -Wno-unknown-pragmas"
 
-    - name: Build
-      run: |
-        cd build
-        make -j4
+      - name: Build
+        run: |
+          cd build
+          make -j4
 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: MathAnimation-macOS
-        path: build/
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MathAnimation-macOS
+          path: build/MathAnimApp
