@@ -108,3 +108,19 @@ set_property(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     PROPERTY VS_STARTUP_PROJECT MathAnimations
 )
+# Nel CMakeLists.txt principale
+if(APPLE)
+    set(MACOS_MINIMAL TRUE)
+endif()
+
+if(MACOS_MINIMAL)
+    # Lista di tutti i file che vuoi compilare su macOS
+    file(GLOB_RECURSE SRC_FILES
+        "Animations/src/animation/*.cpp"
+        # Escludi Axis.cpp, AnimationManager.cpp e Animation.cpp
+    )
+    add_executable(MathAnimApp ${SRC_FILES})
+else()
+    file(GLOB_RECURSE SRC_FILES "Animations/src/animation/*.cpp")
+    add_executable(MathAnimApp ${SRC_FILES})
+endif()
