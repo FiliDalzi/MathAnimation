@@ -36,7 +36,7 @@ elseif(MATH_ANIMATION_OS_WINDOWS)
     # Alias to the macro _MAX_PATH on windows
     set(MATH_ANIMATIONS_MAX_PATH _MAX_PATH)
 else()
-    message(FATAL_ERROR "Targeting unsupported operating system ${CMAKE_SYSTEM_NAME}")
+    message(STATUS "Building on ${CMAKE_SYSTEM_NAME}")
 endif()
 
 add_executable(MathAnimations ${MATH_ANIMATIONS_SOURCE})
