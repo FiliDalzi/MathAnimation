@@ -1,3 +1,12 @@
+if(APPLE)
+    message(STATUS "macOS detected: excluding AV1 submodule and SSE files")
+    set(EXCLUDE_AV1 TRUE)
+endif()
+
+if(NOT EXCLUDE_AV1)
+    add_subdirectory(Animations/vendor/av1)
+endif()
+
 cmake_minimum_required(VERSION 3.21)
 
 project(
