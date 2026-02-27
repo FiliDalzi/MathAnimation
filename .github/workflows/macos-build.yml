@@ -13,9 +13,6 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Install CMake
-      run: brew install cmake
-
     - name: Create Build Directory
       run: mkdir build
 
