@@ -2,7 +2,7 @@
 #define MATH_ANIM_CORE_H
 
 // ======================================================
-// Logger fallback (necessario per build CI/macOS ARM)
+// Logger fallback (CI / macOS ARM safe)
 // ======================================================
 
 #include <iostream>
@@ -26,7 +26,7 @@
 #endif
 
 // ======================================================
-// Glm
+// GLM
 // ======================================================
 
 #pragma warning(push)
@@ -54,7 +54,6 @@
 
 #include <filesystem>
 #include <cstring>
-#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <array>
@@ -71,6 +70,7 @@
 #include <set>
 #include <unordered_set>
 #include <regex>
+#include <type_traits>
 
 // ======================================================
 // GLFW / GLAD
@@ -113,12 +113,10 @@
 #include "math/DataStructures.h"
 
 #include <imgui.h>
-
-// Regex Library
 #include <oniguruma.h>
 
 // ======================================================
-// SIMD intrinsics (solo x86)
+// SIMD intrinsics (only on x86)
 // ======================================================
 
 #if defined(__x86_64__) && !defined(DISABLE_SSE)
@@ -135,7 +133,6 @@ MathAnim::Vec4 operator""_hex(const char* hexColor, size_t length);
 MathAnim::Vec4 toHex(const std::string& str);
 MathAnim::Vec4 toHex(const char* hex, size_t length);
 MathAnim::Vec4 toHex(const char* hex);
-
 std::string toHexString(const MathAnim::Vec4& color);
 
 // ======================================================
@@ -206,8 +203,7 @@ namespace MemoryHelper
     template<typename T>
     size_t copyDataByType(uint8* dst, size_t offset, const T& data)
     {
-        uint8* dstData = dst + offset;
-        *(T*)dstData = data;
+        *(T*)(dst + offset) = data;
         return sizeof(T);
     }
 
@@ -215,35 +211,86 @@ namespace MemoryHelper
     void copyDataToType(uint8* dst, size_t offset, const First& data, Rest... rest)
     {
         static_assert(std::is_trivially_copyable_v<First>,
-            "Cannot accept non-trivial types for dynamic memory packing.");
+            "Only trivially copyable types allowed.");
 
         offset += copyDataByType<First>(dst, offset, data);
 
-        if constexpr (sizeof...(Rest) != 0)
+        if constexpr (sizeof...(Rest) > 0)
         {
             copyDataToType<Rest...>(dst, offset, rest...);
         }
     }
 
-    template <typename First, typename... Rest>
+    template<typename First, typename... Rest>
     void unpackData(const SizedMemory& memory, size_t offset, First* first, Rest*... rest)
     {
 #ifdef _DEBUG
         g_logger_assert(offset + sizeof(First) <= memory.size,
-            "Cannot unpack memory. Buffer overrun.");
+            "Buffer overrun while unpacking memory.");
 #endif
 
         static_assert(std::is_trivially_copyable_v<First>,
-            "Cannot accept non-trivial types for dynamic memory unpacking");
+            "Only trivially copyable types allowed.");
 
-        uint8* data = memory.memory + offset;
-        *first = *(First*)data;
+        *first = *(First*)(memory.memory + offset);
 
-        if constexpr (sizeof...(Rest) != 0)
+        if constexpr (sizeof...(Rest) > 0)
         {
             unpackData<Rest...>(memory, offset + sizeof(First), rest...);
         }
     }
+}
+
+// ======================================================
+// Pack / Unpack helpers
+// ======================================================
+
+template<typename First, typename... Rest>
+constexpr size_t sizeOfTypes()
+{
+    if constexpr (sizeof...(Rest) == 0)
+        return sizeof(First);
+    else
+        return sizeof(First) + sizeOfTypes<Rest...>();
+}
+
+template<typename... Types>
+SizedMemory pack(const Types&... data)
+{
+    size_t totalSize = sizeOfTypes<Types...>();
+    uint8* result = (uint8*)g_memory_allocate(totalSize);
+    MemoryHelper::copyDataToType<Types...>(result, 0, data...);
+    return { result, totalSize };
+}
+
+template<typename... Types>
+void unpack(const SizedMemory& memory, Types*... data)
+{
+    MemoryHelper::unpackData<Types...>(memory, 0, data...);
+}
+
+// ======================================================
+// Array helpers (USED BY Svg.h)
+// ======================================================
+
+template <typename T, std::size_t N, class... Args>
+constexpr std::array<T, N> fixedSizeArray(Args&&... values)
+{
+    static_assert(sizeof...(values) == N,
+        "Number of values must match array size");
+    return std::array<T, N>{ { std::forward<Args>(values)... } };
+}
+
+template<typename T, std::size_t N>
+T findMatchingEnum(const std::array<const char*, N>& names,
+                   const std::string& value)
+{
+    for (size_t i = 0; i < N; i++)
+    {
+        if (names[i] == value)
+            return static_cast<T>(i);
+    }
+    return static_cast<T>(0);
 }
 
 // ======================================================
@@ -260,7 +307,10 @@ namespace MathAnim
     constexpr AnimId NULL_ANIM = UINT64_MAX;
     constexpr TextureHandle NULL_TEXTURE_HANDLE = UINT64_MAX;
 
-    inline bool isNull(uint64 handle) { return handle == UINT64_MAX; }
+    inline bool isNull(uint64 handle)
+    {
+        return handle == UINT64_MAX;
+    }
 }
 
 #endif
