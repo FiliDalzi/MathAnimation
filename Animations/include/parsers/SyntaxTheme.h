@@ -3,8 +3,8 @@
 #include "parsers/Common.h"
 #include "svg/Styles.h"
 
-#include <cppUtilisLocal/cppPrint.hpp>
-#include <cppUtilisLocal/cppUtils.hpp>
+#include <cppUtils/cppPrint.hpp>
+#include <cppUtils/cppUtils.hpp>
 
 namespace MathAnim
 {
