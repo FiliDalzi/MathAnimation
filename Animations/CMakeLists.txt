@@ -1,7 +1,5 @@
-# Animations/CMakeLists.txt
-
 #################################
-# Detect Apple Silicon / SSE
+# Architettura (SSE / ARM)
 #################################
 
 if(APPLE)
@@ -15,21 +13,50 @@ if(APPLE)
 endif()
 
 #################################
-# Source files
+# Vendor
 #################################
 
-set(SRC_FILES
-    src/animation/Animation.cpp
-    src/animation/Axis.cpp
-    src/animation/AnimationManager.cpp
+add_subdirectory(vendor)
+
+#################################
+# Source files (tutto src/)
+#################################
+
+file(GLOB_RECURSE PROJECT_SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/src/*.cpp"
 )
 
 #################################
-# Create library
+# Executable
 #################################
 
-add_library(MathAnimations ${SRC_FILES})
+add_executable(MathAnimApp ${PROJECT_SOURCES})
 
-target_include_directories(MathAnimations PUBLIC
+#################################
+# Include directories
+#################################
+
+target_include_directories(MathAnimApp PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/include
+)
+
+#################################
+# Link vendor libraries
+#################################
+
+target_link_libraries(MathAnimApp PUBLIC
+
+    glfw
+    glad
+    NativeFileDialog
+    freetype
+    OpenAL
+    glm
+    stb
+    nlohmann_json
+    onig
+    plutovg
+    tinyxml2
+    DearImGUIGlfwOgl3Backend
+    DearImGUI
 )
