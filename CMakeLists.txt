@@ -6,8 +6,6 @@ set(CMAKE_C_STANDARD 11)
 
 # Detect OS
 if(APPLE)
-    set(MATH_ANIMATION_OS_OSX TRUE)
-
     if(CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
         message(STATUS "Apple Silicon detected - disabling SSE")
         add_compile_definitions(DISABLE_SSE)
