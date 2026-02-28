@@ -148,7 +148,7 @@ do { \
 } while(false)
 
 #define DESERIALIZE_PROP(obj, prop, j, defaultValue) \
-  (obj)->prop = j.contains(#prop) && !j[#prop].is_null() ? j[#prop] : defaultValue;
+    (obj)->prop = j.value(#prop, defaultValue);
 
 #define DESERIALIZE_VALUE_INLINE(j, prop, defaultValue) \
   j.contains(#prop) && !j[#prop].is_null() ? j[#prop] : defaultValue
