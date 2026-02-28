@@ -60,6 +60,8 @@ target_link_libraries(MathAnimApp PUBLIC
     DearImGUIGlfwOgl3Backend
     DearImGUI
 
+    CppUtils
+
     Luau.Ast
     Luau.Compiler
     Luau.CodeGen
