@@ -9,7 +9,21 @@ add_subdirectory(vendor)
 ##############
 # Animations #
 ##############
+set(SRC_FILES
+    src/animation/Animation.cpp
+    src/animation/Axis.cpp
+    src/animation/AnimationManager.cpp
+)
 
+if(NOT DEFINED DISABLE_SSE)
+    list(APPEND SRC_FILES
+        src/animation/SSEFile1.cpp
+        src/animation/SSEFile2.cpp
+    )
+endif()
+
+add_library(MathAnimations ${SRC_FILES})
+target_include_directories(MathAnimations PUBLIC include)
 set(MATH_ANIMATIONS_INCLUDE_DIR
     ${CMAKE_CURRENT_LIST_DIR}/include
     ${CMAKE_CURRENT_LIST_DIR}/tests
