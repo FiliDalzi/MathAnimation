@@ -1323,7 +1323,7 @@ namespace MathAnim
 				res.imageFilepathLength = 0;
 			}
 
-			if (res.imageFilepath > 0)
+			if (res.imageFilepath != nullptr)
 			{
 				res.textureHandle = TextureCache::lazyLoadTexture(res.imageFilepath, res.getLoadOptions());
 			}
