@@ -1,5 +1,5 @@
 #################################
-# Architettura (SSE / ARM)
+# Architettura
 #################################
 
 if(APPLE)
@@ -19,12 +19,14 @@ endif()
 add_subdirectory(vendor)
 
 #################################
-# Source files (tutto src/)
+# Source files
 #################################
 
 file(GLOB_RECURSE PROJECT_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/src/*.cpp"
 )
+
+list(FILTER PROJECT_SOURCES EXCLUDE REGEX ".*/tests/.*")
 
 #################################
 # Executable
@@ -32,16 +34,12 @@ file(GLOB_RECURSE PROJECT_SOURCES
 
 add_executable(MathAnimApp ${PROJECT_SOURCES})
 
-#################################
-# Include directories
-#################################
-
 target_include_directories(MathAnimApp PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/include
 )
 
 #################################
-# Link vendor libraries
+# Link libraries
 #################################
 
 target_link_libraries(MathAnimApp PUBLIC
@@ -59,4 +57,10 @@ target_link_libraries(MathAnimApp PUBLIC
     tinyxml2
     DearImGUIGlfwOgl3Backend
     DearImGUI
+
+    Luau.Ast
+    Luau.Compiler
+    Luau.CodeGen
+    Luau.VM
+    Luau.Analysis
 )
