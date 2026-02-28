@@ -1,3 +1,5 @@
+#include <iostream>
+#include "core.h"
 #define GABE_CPP_PRINT_IMPL
 #include <cppUtils/cppPrint.hpp>
 #undef GABE_CPP_PRINT_IMPL
