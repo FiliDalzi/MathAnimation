@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.21)
 
 # Rileva l'architettura del Mac
 if(APPLE)
+    # Supponendo che il target sia MathAnimations
+    if(CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
+        target_compile_options(MathAnimations PRIVATE -msse2 -mmmx)
+    endif()
+    
     if(CMAKE_OSX_ARCHITECTURES STREQUAL "" OR CMAKE_OSX_ARCHITECTURES MATCHES "arm64")
         # su Apple Silicon
         message(STATUS "Compilazione per ARM64 (Apple Silicon)")
