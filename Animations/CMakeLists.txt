@@ -1,61 +1,80 @@
-############################
-# macOS Minimal Safe Build #
-############################
+#################################
+# Configure vendored libraries  #
+#################################
 
-# Detect minimal mac build
-if(APPLE)
-    set(MACOS_MINIMAL TRUE)
-endif()
+set(DEAR_IMGUI_USER_CONFIG ${CMAKE_CURRENT_LIST_DIR}/include/core/InternalImGuiConfig.h)
+
+add_subdirectory(vendor)
 
 ##############
-# Source Files
+# Animations #
 ##############
+
+set(MATH_ANIMATIONS_INCLUDE_DIR
+    ${CMAKE_CURRENT_LIST_DIR}/include
+    ${CMAKE_CURRENT_LIST_DIR}/tests
+)
 
 file(GLOB_RECURSE MATH_ANIMATIONS_SOURCE
     "src/*.cpp"
     "include/*.h"
     "include/*.hpp"
+    "tests/*.cpp"
+    "tests/*.h"
 )
-
-# Rimuove file problematici su mac (SSE / Windows only)
-if(MACOS_MINIMAL)
-    list(REMOVE_ITEM MATH_ANIMATIONS_SOURCE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/animation/Axis.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/animation/AnimationManager.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/animation/Animation.cpp
-    )
-endif()
-
-##############
-# Executable
-##############
 
 add_executable(MathAnimations ${MATH_ANIMATIONS_SOURCE})
 
 target_include_directories(MathAnimations PUBLIC
-    ${CMAKE_CURRENT_LIST_DIR}/include
+    ${MATH_ANIMATIONS_INCLUDE_DIR}
 )
 
-##########################
-# Link libraries (minimal)
-##########################
+target_compile_definitions(MathAnimations PUBLIC
+    _CRT_SECURE_NO_WARNINGS=1
+)
 
-# Solo librerie base che servono davvero
+#################################
+# Link libraries (FULL BUILD)   #
+#################################
+
 target_link_libraries(MathAnimations PUBLIC
+
+    # Window / OpenGL
     glfw
     glad
+    NativeFileDialog
+
+    # Fonts / Audio
+    freetype
+    OpenAL
+
+    # Core utils
     CppUtils
     glm
     stb
     nlohmann_json
+
+    # Parsing
+    onig
+    plutovg
+    tinyxml2
+
+    # ImGUI
+    DearImGUIGlfwOgl3Backend
+    DearImGUI
+
+    # Luau
+    Luau.Ast
+    Luau.CodeGen
+    Luau.Compiler
+    Luau.VM
+    Luau.Analysis
+
+    # AV1 Encoder (for export)
+    SvtAv1Enc
 )
 
-##########################
-# Compiler flags
-##########################
-
-if(MSVC)
-    target_compile_options(MathAnimations PRIVATE /W4)
-else()
-    target_compile_options(MathAnimations PRIVATE -Wall -Wextra)
+if(MATH_ANIMATION_OS_LINUX)
+    find_package(OpenSSL REQUIRED)
+    target_link_libraries(MathAnimations PUBLIC OpenSSL::Crypto)
 endif()
