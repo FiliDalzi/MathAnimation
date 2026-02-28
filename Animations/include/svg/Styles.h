@@ -2,8 +2,8 @@
 #define MATH_ANIM_STYLES_H
 #include "core.h"
 
-#include <cppUtils/cppPrint.hpp>
-#include <cppUtils/cppUtils.hpp>
+#include <cppUtilisLocal/cppPrint.hpp>
+#include <cppUtilisLocal/cppUtils.hpp>
 
 namespace MathAnim
 {
