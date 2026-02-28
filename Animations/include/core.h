@@ -1,3 +1,10 @@
+#ifndef FALSE
+#define FALSE 0
+#endif
+
+#ifndef TRUE
+#define TRUE 1
+#endif
 #ifndef MATH_ANIM_CORE_H
 #define MATH_ANIM_CORE_H
 
@@ -9,11 +16,11 @@
 #include <cassert>
 
 #ifndef g_logger_assert
-#define g_logger_assert(cond, msg, ...) \
+#define g_logger_assert(condition, msg, ...) \
     do { \
-        if (!(cond)) { \
-            std::cerr << "Assertion failed: " << msg << std::endl; \
-            assert(cond); \
+        if (!(condition)) { \
+            std::cerr << "Assert: " << msg << std::endl; \
+            std::abort(); \
         } \
     } while(0)
 #endif
