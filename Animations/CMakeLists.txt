@@ -1,12 +1,7 @@
-cmake_minimum_required(VERSION 3.21)
-
-project(MathAnimations VERSION 1.0 LANGUAGES C CXX)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_C_STANDARD 11)
+# Animations/CMakeLists.txt
 
 #################################
-# Detect OS & Architecture
+# Detect Apple Silicon / SSE
 #################################
 
 if(APPLE)
@@ -20,26 +15,14 @@ if(APPLE)
 endif()
 
 #################################
-# Source files (local folder)
+# Source files
 #################################
 
 set(SRC_FILES
-    Animation.cpp
-    Axis.cpp
-    AnimationManager.cpp
+    src/animation/Animation.cpp
+    src/animation/Axis.cpp
+    src/animation/AnimationManager.cpp
 )
-
-# Add SSE files only if they exist and SSE is enabled
-if(NOT DEFINED DISABLE_SSE)
-    if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SSEFile1.cpp")
-        list(APPEND SRC_FILES
-            SSEFile1.cpp
-            SSEFile2.cpp
-        )
-    else()
-        message(STATUS "SSE source files not found - skipping SSE compilation")
-    endif()
-endif()
 
 #################################
 # Create library
@@ -47,7 +30,6 @@ endif()
 
 add_library(MathAnimations ${SRC_FILES})
 
-# Include directory (go up to include folder)
 target_include_directories(MathAnimations PUBLIC
-    ${CMAKE_CURRENT_LIST_DIR}/../../include
+    ${CMAKE_CURRENT_LIST_DIR}/include
 )
