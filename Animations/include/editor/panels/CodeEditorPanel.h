@@ -1,7 +1,7 @@
 #include "core.h"
 #include "parsers/SyntaxHighlighter.h"
 
-#include <cppUtils/cppStrings.hpp>
+#include <cppUtilisLocal/cppStrings.hpp>
 
 namespace MathAnim
 {
