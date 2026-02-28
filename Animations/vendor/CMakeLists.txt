@@ -1,3 +1,7 @@
+# Disable SSE automatically on Apple Silicon
+if(APPLE AND CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+    add_compile_definitions(DISABLE_SSE)
+endif()
 # Vendored libraries
 
 # This file acts as a proxy between all the vendored libraries
