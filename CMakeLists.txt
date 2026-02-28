@@ -5,14 +5,23 @@ project(MathAnimations VERSION 1.0 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 11)
 
-# Detect macOS
+# Detect OS
 if(APPLE)
-    message(STATUS "macOS detected: building minimal version")
-    set(MACOS_MINIMAL TRUE)
+    set(MATH_ANIMATION_OS_OSX TRUE)
+
+    # Detect Apple Silicon
+    if(CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+        message(STATUS "Apple Silicon detected - disabling SSE")
+        add_compile_definitions(DISABLE_SSE)
+    endif()
 endif()
 
-# Output folders
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+if(WIN32)
+    set(MATH_ANIMATION_OS_WINDOWS TRUE)
+endif()
 
-# Include main module
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(MATH_ANIMATION_OS_LINUX TRUE)
+endif()
+
 add_subdirectory(Animations)
