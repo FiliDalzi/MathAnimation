@@ -25,6 +25,13 @@
     } while(0)
 #endif
 
+#ifndef g_logger_error
+#define g_logger_error(msg, ...) \
+    do { \
+        std::cerr << "Error: " << msg << std::endl; \
+    } while(0)
+#endif
+
 // ======================================================
 // GLM
 // ======================================================
