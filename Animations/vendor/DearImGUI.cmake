@@ -36,6 +36,13 @@ if(DEFINED "DEAR_IMGUI_EXTRA_INCLUDE_DIRS")
     target_include_directories(DearImGUIGlfwOgl3Backend PRIVATE ${DEAR_IMGUI_EXTRA_INCLUDE_DIRS})
 endif()
 
-# Aggiungi include path per core del progetto
-target_include_directories(DearImGUI PRIVATE ${CMAKE_SOURCE_DIR}/Animations/include)
-target_include_directories(DearImGUIGlfwOgl3Backend PRIVATE ${CMAKE_SOURCE_DIR}/Animations/include)
+# Aggiungi include path per core del progetto e cppUtils
+target_include_directories(DearImGUI PRIVATE 
+    ${CMAKE_SOURCE_DIR}/Animations/include
+    ${CMAKE_CURRENT_LIST_DIR}/cppUtils/single_include
+)
+
+target_include_directories(DearImGUIGlfwOgl3Backend PRIVATE 
+    ${CMAKE_SOURCE_DIR}/Animations/include
+    ${CMAKE_CURRENT_LIST_DIR}/cppUtils/single_include
+)
