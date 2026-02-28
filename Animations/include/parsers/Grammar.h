@@ -236,7 +236,7 @@ namespace MathAnim
 		size_t updateFromByte(SourceGrammarTree& tree, SyntaxTheme const& theme, uint32_t byteOffset = 0, uint32_t maxNumLinesToUpdate = DEFAULT_MAX_LINES_TO_UPDATE) const;
 
 		// @deprecated -- Do it yourself, no really. Do it yourself.
-		SourceGrammarTree Grammar::parseCodeBlock(const char* code, size_t codeLength, SyntaxTheme const& theme) const;
+		SourceGrammarTree parseCodeBlock(const char* code, size_t codeLength, SyntaxTheme const& theme) const;
 
 		static Grammar* importGrammar(const char* filepath);
 		static void free(Grammar* grammar);
