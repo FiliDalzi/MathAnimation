@@ -80,8 +80,12 @@ MathAnim::Vec4 toHex(const char* hex);
 
 std::string toHexString(const MathAnim::Vec4& color);
 
-// SIMD intrinsics
-#include <xmmintrin.h>
+// SIMD intrinsics (solo su x86)
+#if defined(__x86_64__) && !defined(DISABLE_SSE)
+    #include <xmmintrin.h>
+    #include <emmintrin.h>
+    #include <mmintrin.h>
+#endif
 
 #define MATH_ANIM_ENUM_FLAG_OPS(enumName) \
 inline enumName operator|(enumName lhs, enumName rhs) { \
