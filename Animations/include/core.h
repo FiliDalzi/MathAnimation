@@ -1,9 +1,36 @@
 #ifndef MATH_ANIM_CORE_H
 #define MATH_ANIM_CORE_H
 
+// ======================================================
+// Logger fallback (necessario per build CI/macOS ARM)
+// ======================================================
+
+#include <iostream>
+#include <cassert>
+
+#ifndef g_logger_assert
+#define g_logger_assert(cond, msg, ...) \
+    do { \
+        if (!(cond)) { \
+            std::cerr << "Assertion failed: " << msg << std::endl; \
+            assert(cond); \
+        } \
+    } while(0)
+#endif
+
+#ifndef g_logger_warning
+#define g_logger_warning(msg, ...) \
+    do { \
+        std::cerr << "Warning: " << msg << std::endl; \
+    } while(0)
+#endif
+
+// ======================================================
 // Glm
-#pragma warning( push )
-#pragma warning( disable : 4201 )
+// ======================================================
+
+#pragma warning(push)
+#pragma warning(disable : 4201)
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
@@ -12,13 +39,19 @@
 #include <glm/gtx/norm.hpp>
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
-#pragma warning( pop )
+#pragma warning(pop)
 
+// ======================================================
 // My stuff
+// ======================================================
+
 #define USE_GABE_CPP_PRINT
 #include <cppUtils/cppUtils.hpp>
 
+// ======================================================
 // Standard
+// ======================================================
+
 #include <filesystem>
 #include <cstring>
 #include <iostream>
@@ -39,11 +72,14 @@
 #include <unordered_set>
 #include <regex>
 
-// GLFW/glad
+// ======================================================
+// GLFW / GLAD
+// ======================================================
+
 #ifndef APIENTRY
 #ifdef _WIN32
-#define APIENTRY __stdcall // NOTE: This hack should prevent me from having to include Windows.h to stop APIENTRY from being redefined
-#else 
+#define APIENTRY __stdcall
+#else
 #define APIENTRY
 #endif
 #endif
@@ -55,24 +91,46 @@
 #undef APIENTRY
 #endif
 
+// ======================================================
 // stb
+// ======================================================
+
 #include <stb/stb_image.h>
 #include <stb/stb_write.h>
 #include <stb/stb_image_resize.h>
 
+// ======================================================
 // Freetype
+// ======================================================
+
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+// ======================================================
 // Core library stuff
+// ======================================================
+
 #include "math/DataStructures.h"
 
 #include <imgui.h>
 
-// Regex Library for textmate grammar
+// Regex Library
 #include <oniguruma.h>
 
+// ======================================================
+// SIMD intrinsics (solo x86)
+// ======================================================
+
+#if defined(__x86_64__) && !defined(DISABLE_SSE)
+    #include <xmmintrin.h>
+    #include <emmintrin.h>
+    #include <mmintrin.h>
+#endif
+
+// ======================================================
 // User defined literals
+// ======================================================
+
 MathAnim::Vec4 operator""_hex(const char* hexColor, size_t length);
 MathAnim::Vec4 toHex(const std::string& str);
 MathAnim::Vec4 toHex(const char* hex, size_t length);
@@ -80,154 +138,117 @@ MathAnim::Vec4 toHex(const char* hex);
 
 std::string toHexString(const MathAnim::Vec4& color);
 
-// SIMD intrinsics (solo su x86)
-#if defined(__x86_64__) && !defined(DISABLE_SSE)
-    #include <xmmintrin.h>
-    #include <emmintrin.h>
-    #include <mmintrin.h>
-#endif
+// ======================================================
+// Utility macros
+// ======================================================
 
 #define MATH_ANIM_ENUM_FLAG_OPS(enumName) \
 inline enumName operator|(enumName lhs, enumName rhs) { \
-	return static_cast<enumName>( \
-		static_cast<std::underlying_type_t<enumName>>(lhs) | \
-		static_cast<std::underlying_type_t<enumName>>(rhs)   \
-		); \
+    return static_cast<enumName>( \
+        static_cast<std::underlying_type_t<enumName>>(lhs) | \
+        static_cast<std::underlying_type_t<enumName>>(rhs)); \
 } \
-inline enumName operator&(enumName lhs, enumName rhs) \
-{ \
-	return static_cast<enumName>( \
-		static_cast<std::underlying_type_t<enumName>>(lhs) & \
-		static_cast<std::underlying_type_t<enumName>>(rhs)   \
-		); \
+inline enumName operator&(enumName lhs, enumName rhs) { \
+    return static_cast<enumName>( \
+        static_cast<std::underlying_type_t<enumName>>(lhs) & \
+        static_cast<std::underlying_type_t<enumName>>(rhs)); \
 }
 
 #define KB(x) (x * 1024)
 #define MB(x) (x * KB(1024))
 #define GB(x) (x * MB(1024))
 
+// ======================================================
+// Memory structures
+// ======================================================
+
 struct RawMemory
 {
-	uint8* data;
-	size_t size;
-	size_t offset;
+    uint8* data;
+    size_t size;
+    size_t offset;
 
-	void init(size_t initialSize);
-	void free();
-	void shrinkToFit();
-	void resetReadWriteCursor();
+    void init(size_t initialSize);
+    void free();
+    void shrinkToFit();
+    void resetReadWriteCursor();
 
-	void writeDangerous(const uint8* data, size_t dataSize);
-	bool readDangerous(uint8* data, size_t dataSize);
+    void writeDangerous(const uint8* data, size_t dataSize);
+    bool readDangerous(uint8* data, size_t dataSize);
 
-	template<typename T>
-	void write(const T* data)
-	{
-		writeDangerous((uint8*)data, sizeof(T));
-	}
+    template<typename T>
+    void write(const T* data)
+    {
+        writeDangerous((uint8*)data, sizeof(T));
+    }
 
-	template<typename T>
-	bool read(T* data)
-	{
-		return readDangerous((uint8*)data, sizeof(T));
-	}
+    template<typename T>
+    bool read(T* data)
+    {
+        return readDangerous((uint8*)data, sizeof(T));
+    }
 
-	void setCursor(size_t offset);
+    void setCursor(size_t offset);
 };
 
 struct SizedMemory
 {
-	uint8* memory;
-	size_t size;
+    uint8* memory;
+    size_t size;
 };
+
+// ======================================================
+// Memory helper
+// ======================================================
 
 namespace MemoryHelper
 {
-	template<typename T>
-	size_t copyDataByType(uint8* dst, size_t offset, const T& data)
-	{
-		uint8* dstData = dst + offset;
-		*(T*)dstData = data;
-		return sizeof(T);
-	}
+    template<typename T>
+    size_t copyDataByType(uint8* dst, size_t offset, const T& data)
+    {
+        uint8* dstData = dst + offset;
+        *(T*)dstData = data;
+        return sizeof(T);
+    }
 
-	template<typename First, typename... Rest>
-	void copyDataToType(uint8* dst, size_t offset, const First& data, Rest... rest)
-	{
-		static_assert(std::is_pod<First>(), "Cannot accept non-POD values for dynamic memory packing.");
-		offset += copyDataByType<First>(dst, offset, data);
-		if constexpr (sizeof...(Rest) != 0)
-		{
-			copyDataToType<Rest...>(dst, offset, rest...);
-		}
-	}
+    template<typename First, typename... Rest>
+    void copyDataToType(uint8* dst, size_t offset, const First& data, Rest... rest)
+    {
+        static_assert(std::is_trivially_copyable_v<First>,
+            "Cannot accept non-trivial types for dynamic memory packing.");
 
-	template <typename First, typename... Rest>
-	void unpackData(const SizedMemory& memory, size_t offset, First* first, Rest*... rest)
-	{
+        offset += copyDataByType<First>(dst, offset, data);
+
+        if constexpr (sizeof...(Rest) != 0)
+        {
+            copyDataToType<Rest...>(dst, offset, rest...);
+        }
+    }
+
+    template <typename First, typename... Rest>
+    void unpackData(const SizedMemory& memory, size_t offset, First* first, Rest*... rest)
+    {
 #ifdef _DEBUG
-		g_logger_assert(offset + sizeof(First) <= memory.size, "Cannot unpack this memory. Would result in a buffer overrun.");
+        g_logger_assert(offset + sizeof(First) <= memory.size,
+            "Cannot unpack memory. Buffer overrun.");
 #endif
-		static_assert(std::is_pod<First>(), "Cannot accept non-POD values for dynamic memory unpacking");
-		uint8* data = memory.memory + offset;
-		*first = *(First*)data;
 
-		if constexpr (sizeof...(Rest) != 0)
-		{
-			unpackData<Rest...>(memory, offset + sizeof(First), rest...);
-		}
-	}
+        static_assert(std::is_trivially_copyable_v<First>,
+            "Cannot accept non-trivial types for dynamic memory unpacking");
+
+        uint8* data = memory.memory + offset;
+        *first = *(First*)data;
+
+        if constexpr (sizeof...(Rest) != 0)
+        {
+            unpackData<Rest...>(memory, offset + sizeof(First), rest...);
+        }
+    }
 }
 
-template<typename First, typename... Rest>
-size_t sizeOfTypes()
-{
-	if constexpr (sizeof...(Rest) == 0)
-	{
-		return sizeof(First);
-	}
-	else
-	{
-		return sizeof(First) + sizeOfTypes<Rest...>();
-	}
-}
-
-template<typename... Types>
-SizedMemory pack(const Types&... data)
-{
-	size_t typesSize = sizeOfTypes<Types...>();
-	uint8* result = (uint8*)g_memory_allocate(typesSize);
-	MemoryHelper::copyDataToType<Types...>(result, 0, data...);
-	return { result, typesSize };
-}
-
-template<typename... Types>
-void unpack(const SizedMemory& memory, Types*... data)
-{
-	MemoryHelper::unpackData<Types...>(memory, 0, data...);
-}
-
-// Array helpers taken from https://stackoverflow.com/a/57524328
-template <typename T, std::size_t N, class ...Args>
-constexpr std::array<T, N> fixedSizeArray(Args&&... values)
-{
-	static_assert(sizeof...(values) == N);
-	return std::array<T, N>{values...};
-}
-
-template<typename T, std::size_t N>
-T findMatchingEnum(const std::array<const char*, N> enumNamesAsStr, const std::string& enumToFind)
-{
-	for (size_t i = 0; i < enumNamesAsStr.size(); i++)
-	{
-		if (enumNamesAsStr[i] == enumToFind)
-		{
-			return (T)i;
-		}
-	}
-
-	return (T)(0);
-}
+// ======================================================
+// IDs
+// ======================================================
 
 typedef uint64 AnimObjId;
 typedef uint64 AnimId;
@@ -235,11 +256,11 @@ typedef uint64 TextureHandle;
 
 namespace MathAnim
 {
-	constexpr AnimObjId NULL_ANIM_OBJECT = UINT64_MAX;
-	constexpr AnimId NULL_ANIM = UINT64_MAX;
-	constexpr TextureHandle NULL_TEXTURE_HANDLE = UINT64_MAX;
+    constexpr AnimObjId NULL_ANIM_OBJECT = UINT64_MAX;
+    constexpr AnimId NULL_ANIM = UINT64_MAX;
+    constexpr TextureHandle NULL_TEXTURE_HANDLE = UINT64_MAX;
 
-	inline bool isNull(uint64 handle) { return handle == UINT64_MAX; }
+    inline bool isNull(uint64 handle) { return handle == UINT64_MAX; }
 }
 
 #endif
