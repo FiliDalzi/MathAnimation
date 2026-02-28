@@ -403,7 +403,7 @@ void* operator new(size_t size, const char* filename, int line)
 void operator delete(void* memory, const char*, int)
 {
 	g_logger_error("Exception thrown in new operator.");
-	return delete memory;
+	free(memory); // se memory è stato allocato con malloc/calloc
 }
 
 #endif 
@@ -940,7 +940,7 @@ void g_logger_set_log_directory(const char* directory)
 	memcpy(logFilePath + (sizeof(char) * dirStringLength), timebuf, sizeof(char) * filenameLength);
 	logFilePath[dirStringLength + filenameLength] = '\0';
 
-	fopen_s(&logFile, logFilePath, "wb");
+	logFile = fopen(logFilePath, "wb");
 	if (!logFile)
 	{
 		printf("Failed to open file '%s' to log to. Please make sure the log directory exists, otherwise this will fail.\n", logFilePath);
@@ -970,7 +970,7 @@ void _g_logger_printPreamble(const char* filename, int line, char* buf, size_t b
 	time_t now;
 	time(&now);
 	struct tm localTime;
-	localtime_s(&localTime, &now);
+	localtime_r(&now, &localTime); // macOS/POSIX
 	strftime(buf, bufSize, "%Y-%m-%d %I:%M:%S", &localTime);
 	IO::printf("[{}]: ", buf);
 }
@@ -1290,7 +1290,7 @@ void _g_logger_assert(const char* filename, int line, int condition, const char*
 }
 
 #else
-#error "Unsupported platform for logging implementation."
+// macOS support - usiamo fopen_r/printf/ctime
 #endif // end LOGGING_IMPL_LINUX
 
 // ----------------------------------
