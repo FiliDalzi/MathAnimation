@@ -4,6 +4,8 @@
 #include <AL/al.h>
 #include <AL/alext.h>
 
+#include <iostream>
+
 namespace MathAnim
 {
 	// TODO: Come up with an error handling macro or something for 
@@ -59,7 +61,7 @@ namespace MathAnim
 					deviceIndex++;
 				}
 
-				g_logger_info("{}", logMessage.c_str());
+				std::cout << logMessage << std::endl;
 			}
 		}
 
