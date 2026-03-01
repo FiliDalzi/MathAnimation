@@ -68,3 +68,7 @@ target_link_libraries(MathAnimApp PUBLIC
     Luau.VM
     Luau.Analysis
 )
+
+# Aggiungi Threads qui
+find_package(Threads REQUIRED)
+target_link_libraries(MathAnimApp PUBLIC Threads::Threads)
