@@ -1,7 +1,7 @@
 #ifdef _MATH_ANIM_TESTS
 #ifndef MATH_ANIM_SYNTAX_HIGHLIGHTER_TESTS_H
 #define MATH_ANIM_SYNTAX_HIGHLIGHTER_TESTS_H
-#include <cppUtilisLocal/cppTests.hpp>
+#include <cppUtils/cppTests.hpp>
 
 namespace MathAnim
 {
