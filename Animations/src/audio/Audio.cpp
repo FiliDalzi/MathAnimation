@@ -35,7 +35,9 @@ namespace MathAnim
 			// Collect all the available audio playback device names and store them
 			const ALCchar* devices = alcGetString(NULL, ALC_ALL_DEVICES_SPECIFIER);
 			currentDeviceName = alcGetString(device, ALC_ALL_DEVICES_SPECIFIER);
-			g_logger_info("Audio Output Device: '{}'", (const char*)currentDeviceName);
+			std::cout << "Audio Output Device: " 
+          << (const char*)currentDeviceName 
+          << std::endl;
 			{
 				std::string logMessage = "Available Output Devices:\n";
 				const ALCchar* currentDevice = devices;
