@@ -1,8 +1,8 @@
 #ifndef MATH_ANIM_DATA_STRUCTURES_H
 #define MATH_ANIM_DATA_STRUCTURES_H
 
-#include <cppUtilisLocal/cppPrint.hpp>
-#include <cppUtilisLocal/cppUtils.hpp>
+#include <cppUtils/cppPrint.hpp>
+#include <cppUtils/cppUtils.hpp>
 
 #pragma warning( push )
 #pragma warning( disable : 4201 )
