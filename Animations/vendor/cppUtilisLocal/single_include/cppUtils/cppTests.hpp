@@ -338,7 +338,9 @@ void setAfterAll(TestSuite& testSuite, const char* functionName, TestFn fn)
 
 void runTests()
 {
-	g_logger_info("Running {} test {}.\n", testSuites.size(), testSuites.size() > 1 ? "suites" : "suite");
+	std::cout << "Running " << testSuites.size() << " test "
+          << (testSuites.size() > 1 ? "suites" : "suite")
+          << ".\n";
 
 	// TODO: Add thread pool implementation
 	//GlobalThreadPool threadPool = GlobalThreadPool(std::thread::hardware_concurrency());
