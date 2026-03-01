@@ -1,3 +1,4 @@
+#include "core.h"
 #include "core/ProjectApp.h"
 #include "core/Window.h"
 #include "core/Profiling.h"
