@@ -40,12 +40,7 @@ target_include_directories(MathAnimApp PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/vendor/cppUtilisLocal/single_include
 )
 
-#################################
-# Link libraries
-#################################
-
 target_link_libraries(MathAnimApp PUBLIC
-
     glfw
     glad
     NativeFileDialog
@@ -59,9 +54,7 @@ target_link_libraries(MathAnimApp PUBLIC
     tinyxml2
     DearImGUIGlfwOgl3Backend
     DearImGUI
-
     CppUtils
-
     Luau.Ast
     Luau.Compiler
     Luau.CodeGen
@@ -69,6 +62,6 @@ target_link_libraries(MathAnimApp PUBLIC
     Luau.Analysis
 )
 
-# Aggiungi Threads qui
+# Threads va dopo il target_link_libraries
 find_package(Threads REQUIRED)
 target_link_libraries(MathAnimApp PUBLIC Threads::Threads)
