@@ -4,8 +4,8 @@
 #include "SyntaxHighlighterTests.h"
 #include "SyntaxThemeTests.h"
 
-#include <cppUtilisLocal/cppTests.hpp>
-#include <cppUtilisLocal/cppUtils.hpp>
+#include <cppUtils/cppTests.hpp>
+#include <cppUtils/cppUtils.hpp>
 
 using namespace CppUtils;
 
