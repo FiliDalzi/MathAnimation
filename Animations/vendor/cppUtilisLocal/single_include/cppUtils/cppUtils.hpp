@@ -265,11 +265,11 @@ extern "C" {
 #define g_logger_assert(condition, format, ...) _g_logger_assert(__FILE__, __LINE__, condition, format, __VA_ARGS__)
 
 	GABE_CPP_UTILS_API void _g_logger_cStdCommonPrint(const char* filename, int line, g_logger_level level, WORD color, const char* format, ...);
-#elif defined(unix) || defined(__unix) || defined(__unix__)
+#elif defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__)
 #define g_logger_log(format, ...) _g_logger_cStdCommonPrint(__FILE__, __LINE__, g_logger_level_Log, ColorCode::KBLU, format,##__VA_ARGS__)
 #define g_logger_info(format, ...) _g_logger_cStdCommonPrint(__FILE__, __LINE__, g_logger_level_Info, ColorCode::KGRN, format,##__VA_ARGS__)
-#define g_logger_warning(format, ...) _g_logger_cStdCommonPrint(__FILE__, __LINE__, , g_logger_level_Warning, ColorCode::KYEL, format,##__VA_ARGS__)
-#define g_logger_error(format, ...) _g_logger_cStdCommonPrint(__FILE__, __LINE__, , g_logger_level_Error, ColorCode::KRED, format,##__VA_ARGS__)
+#define g_logger_warning(format, ...) _g_logger_cStdCommonPrint(__FILE__, __LINE__, g_logger_level_Warning, ColorCode::KYEL, format,##__VA_ARGS__)
+#define g_logger_error(format, ...) _g_logger_cStdCommonPrint(__FILE__, __LINE__, g_logger_level_Error, ColorCode::KRED, format,##__VA_ARGS__)
 #define g_logger_assert(condition, format, ...) _g_logger_assert(__FILE__, __LINE__, condition, format,##__VA_ARGS__)
 
 	GABE_CPP_UTILS_API void _g_logger_cStdCommonPrint(const char* filename, int line, g_logger_level level, const char* color, const char* format, ...);
@@ -1353,30 +1353,62 @@ static void g_thread_freeMutexUntracked(void* mtx)
 	}
 }
 
-#elif defined(__linux__) // End ThreadImpl _WIN32
-// Begin ThreadImpl Linux
+#elif defined(__linux__) || defined(__APPLE__)
 
-GABE_CPP_UTILS_API void* g_thread_createMutex() n
+#include <pthread.h>
+
+GABE_CPP_UTILS_API void* g_thread_createMutex()
 {
-	g_logger_assert(false, "TODO: Implement me.");
+    pthread_mutex_t* mtx = (pthread_mutex_t*)g_memory_allocate(sizeof(pthread_mutex_t));
+    pthread_mutex_init(mtx, NULL);
+    return (void*)mtx;
 }
 
 GABE_CPP_UTILS_API void g_thread_lockMutex(void* mtx)
 {
-	g_logger_assert(false, "TODO: Implement me.");
+    pthread_mutex_lock((pthread_mutex_t*)mtx);
 }
 
 GABE_CPP_UTILS_API void g_thread_releaseMutex(void* mtx)
 {
-	g_logger_assert(false, "TODO: Implement me.");
+    pthread_mutex_unlock((pthread_mutex_t*)mtx);
 }
 
 GABE_CPP_UTILS_API void g_thread_freeMutex(void* mtx)
 {
-	g_logger_assert(false, "TODO: Implement me.");
+    if (mtx)
+    {
+        pthread_mutex_destroy((pthread_mutex_t*)mtx);
+        g_memory_free(mtx);
+    }
+}
+
+static void* g_thread_createMutexUntracked(void)
+{
+    pthread_mutex_t* mtx = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
+    if (mtx)
+        pthread_mutex_init(mtx, NULL);
+    return (void*)mtx;
+}
+
+static void g_thread_freeMutexUntracked(void* mtx)
+{
+    if (mtx)
+    {
+        pthread_mutex_destroy((pthread_mutex_t*)mtx);
+        free(mtx);
+    }
 }
 
 #endif // End ThreadImpl Linux
+// ------------------------------------------------------------
+// Minimal logger replacement (temporary fix)
+// ------------------------------------------------------------
+
+#ifndef g_logger_log
+#define g_logger_log(...) \
+    do { std::cout << "[LOG] "; printf(__VA_ARGS__); std::cout << std::endl; } while(0)
+#endif
 #endif // CPP_UTILS_IMPL
 
 /*
