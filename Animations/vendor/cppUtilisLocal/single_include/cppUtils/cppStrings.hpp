@@ -241,11 +241,11 @@ namespace CppUtils
 		static size_t getPreviousCharacterFrom(const uint8_t* string, size_t numBytes, size_t cursor);
 
 		// NOTE: These are not safe, don't call unless you know cursor >= 0 && cursor <= strLength
-		static [[nodiscard]] inline bool isOneBytePrefix(uint8_t const* string, size_t cursor) { return (string[cursor] >> OCTET_SHIFT_AMTS[0]) == OCTET_BYTE_ONE_MASKS[0]; }
-		static [[nodiscard]] inline bool isTwoBytePrefix(uint8_t const* string, size_t cursor) { return (string[cursor] >> OCTET_SHIFT_AMTS[1]) == OCTET_BYTE_ONE_MASKS[1]; }
-		static [[nodiscard]] inline bool isThreeBytePrefix(uint8_t const* string, size_t cursor) { return (string[cursor] >> OCTET_SHIFT_AMTS[2]) == OCTET_BYTE_ONE_MASKS[2]; }
-		static [[nodiscard]] inline bool isFourBytePrefix(uint8_t const* string, size_t cursor) { return (string[cursor] >> OCTET_SHIFT_AMTS[3]) == OCTET_BYTE_ONE_MASKS[3]; }
-		static [[nodiscard]] inline bool isAnyPrefix(uint8_t const* string, size_t cursor)
+		[[nodiscard]] static inline bool isOneBytePrefix(uint8_t const* string, size_t cursor) { return (string[cursor] >> OCTET_SHIFT_AMTS[0]) == OCTET_BYTE_ONE_MASKS[0]; }
+		[[nodiscard]] static inline bool isTwoBytePrefix(uint8_t const* string, size_t cursor) { return (string[cursor] >> OCTET_SHIFT_AMTS[1]) == OCTET_BYTE_ONE_MASKS[1]; }
+		[[nodiscard]] static inline bool isThreeBytePrefix(uint8_t const* string, size_t cursor) { return (string[cursor] >> OCTET_SHIFT_AMTS[2]) == OCTET_BYTE_ONE_MASKS[2]; }
+		[[nodiscard]] static inline bool isFourBytePrefix(uint8_t const* string, size_t cursor) { return (string[cursor] >> OCTET_SHIFT_AMTS[3]) == OCTET_BYTE_ONE_MASKS[3]; }
+		[[nodiscard]] static inline bool isAnyPrefix(uint8_t const* string, size_t cursor)
 		{
 			return isOneBytePrefix(string, cursor) ||
 				isTwoBytePrefix(string, cursor) ||
