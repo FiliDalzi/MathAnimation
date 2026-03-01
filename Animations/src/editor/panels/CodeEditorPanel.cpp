@@ -9,7 +9,7 @@
 #include "editor/TextEditUndo.h"
 #include "parsers/SyntaxTheme.h"
 
-#include <cppUtilisLocal/cppStrings.hpp>
+#include <cppUtils/cppStrings.hpp>
 
 using namespace CppUtils;
 
