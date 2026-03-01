@@ -38,6 +38,19 @@
         std::cerr << "Error: " << msg << std::endl; \
     } while(0)
 #endif
+#ifndef g_logger_info
+#define g_logger_info(msg, ...) \
+    do { \
+        std::cout << "Info: " << msg << std::endl; \
+    } while(0)
+#endif
+
+#ifndef g_logger_log
+#define g_logger_log(msg, ...) \
+    do { \
+        std::cout << "Log: " << msg << std::endl; \
+    } while(0)
+#endif
 
 // ======================================================
 // GLM
