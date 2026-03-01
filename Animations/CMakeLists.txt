@@ -37,7 +37,7 @@ add_executable(MathAnimApp ${PROJECT_SOURCES})
 target_include_directories(MathAnimApp PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/include
     ${CMAKE_CURRENT_LIST_DIR}/vendor
-    ${CMAKE_CURRENT_LIST_DIR}/vendor/cppUtils
+    ${CMAKE_CURRENT_LIST_DIR}/vendor/cppUtilisLocal/single_include
 )
 
 #################################
