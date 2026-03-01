@@ -843,19 +843,23 @@ template<typename T>
 static size_t integerToString(char* const buffer, size_t bufferSize, T integer, Stream& io)
 {
 	switch (io.type)
-	{
-	case StreamParamType::None: // Default to decimal display
-		// TODO: Should we throw a runtime error here or does it really matter?
-	case StreamParamType::FixedPoint: // Treat any floating point modifiers as the default state as well
-	case StreamParamType::Decimal:
-		return integerToString(buffer, bufferSize, integer);
-	case StreamParamType::Hexadecimal:
-	case StreamParamType::Pointer:
-		return integerToHexString(buffer, bufferSize, &integer, sizeof(T),
-			(uint32_t)io.mods & (uint32_t)StreamMods::CapitalModifier);
-	case StreamParamType::Binary:
-		return dataToBinaryString(buffer, bufferSize, &integer, sizeof(T));
-	}
+{
+    case StreamParamType::None:
+    case StreamParamType::FixedPoint:
+    case StreamParamType::Decimal:
+        return integerToString(buffer, bufferSize, integer);
+
+    case StreamParamType::Hexadecimal:
+    case StreamParamType::Pointer:
+        return integerToHexString(buffer, bufferSize, &integer, sizeof(T),
+            (uint32_t)io.mods & (uint32_t)StreamMods::CapitalModifier);
+
+    case StreamParamType::Binary:
+        return dataToBinaryString(buffer, bufferSize, &integer, sizeof(T));
+
+    default:
+        return integerToString(buffer, bufferSize, integer);
+}
 
 	throw std::runtime_error("Unsupported io stream modifier in integerToString used.");
 }
