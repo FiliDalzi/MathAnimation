@@ -917,7 +917,11 @@ void g_logger_set_log_directory(const char* directory)
 	time_t now;
 	time(&now);
 	struct tm localTime;
-	localtime_s(&localTime, &now);
+	#if defined(_WIN32)
+    localtime_s(&localTime, &now);
+#else
+    localtime_r(&now, &localTime);
+#endif
 	strftime(timebuf, sizeof(timebuf), "/log_%Y-%m-%d_%I_%M_%S.txt", &localTime);
 
 	size_t filenameLength = strlen(timebuf);
